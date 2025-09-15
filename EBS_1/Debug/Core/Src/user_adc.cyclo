@@ -1,0 +1,4 @@
+../Core/Src/user_adc.c:10:10:get_adc_value	1
+../Core/Src/user_adc.c:18:6:qiya_compare	3
+../Core/Src/user_adc.c:31:6:youya_compare	3
+../Core/Src/user_adc.c:42:6:YOUYA_QIYA_Detect	2
