@@ -1,0 +1,6 @@
+../Core/Src/user_peripheral.c:9:6:BEE_Activate	2
+../Core/Src/user_peripheral.c:17:6:BEE_DeActivate	2
+../Core/Src/user_peripheral.c:26:6:DCF_Activate	2
+../Core/Src/user_peripheral.c:34:6:DCF_DeActivate	2
+../Core/Src/user_peripheral.c:43:6:EBS_Error_LED_Activate	1
+../Core/Src/user_peripheral.c:49:6:EBS_Error_LED_DeActivate	1

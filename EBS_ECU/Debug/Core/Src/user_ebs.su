@@ -1,0 +1,4 @@
+../Core/Src/user_ebs.c:10:6:EBS_Trigger	8	static
+../Core/Src/user_ebs.c:19:6:EBS_Error_Trigger	8	static
+../Core/Src/user_ebs.c:46:6:EBS_Release	4	static
+../Core/Src/user_ebs.c:51:6:EBS_Able_Detect	8	static
