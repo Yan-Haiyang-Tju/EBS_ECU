@@ -37,6 +37,7 @@ if(rx_data[0]==0)
     if (rx_header.StdId == 0x101)
     {
     	HAL_UART_Transmit(&huart1, "CAN_GetMsg Succeed", 18, 10);
+    	CAN_SendMessage(102, 15);
         if(rx_data[0]==30)//AS_Ready
         {
         	AS_State=AS_Ready;

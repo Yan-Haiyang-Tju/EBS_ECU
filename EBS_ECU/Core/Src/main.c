@@ -69,6 +69,8 @@ uint8_t EBS_Error_to_Trigger;
 uint8_t JITING_State=0;
 volatile uint8_t blink_enabled = 0; //0 不闪烁  1蓝灯闪烁  2黄灯闪烁
 volatile uint8_t led_state = 0;
+int tim3_num=0;
+int tim4_num=0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -132,16 +134,18 @@ int main(void)
   /* USER CODE BEGIN 2 */
   User_Init();
   CAN_Init();
-  //HAL_Delay(3000);
+  HAL_Delay(100);
   HAL_TIM_Base_Start_IT(&htim3);
-  HAL_TIM_Base_Start_IT(&htim4);
+  //HAL_TIM_Base_Start_IT(&htim4);
   //DCF_Activate();
 //  ASSI_Yellow_Stable();
  // ASSI_Yellow_Blink();
-//  ASSI_OFF();
+  //ASSI_OFF();
   CAN_SendMessage(100,101);
 
- // ASSI_Set_Blue();
+  //ASSI_Set_Blue();
+  HAL_Delay(100);
+  //WS2812_Update();
  /* BEE_Activate();
   HAL_Delay(100);
   BEE_DeActivate();

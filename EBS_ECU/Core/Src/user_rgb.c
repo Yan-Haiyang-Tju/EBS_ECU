@@ -212,6 +212,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM3)//控制ASSI闪烁
 	{
+		 HAL_GPIO_TogglePin(WDOG_GPIO_Port, WDOG_Pin);
+		 //CAN_SendMessage(100,103);
+		 //tim3_num++;
+		 //if(tim3_num>=100)
+		 //{
+			// tim3_num=0;
+		 //}
+		/*
 		if(blink_enabled==1)//蓝灯闪烁
 		{
 			led_state ^= 1;
@@ -236,11 +244,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		     {
 		   		  ASSI_Set_Black();
 		     }
-		}
+		}*/
 	}
-	if(htim->Instance == TIM4)//发送CAN消息
+	/*if(htim->Instance == TIM4)//发送CAN消息
 	{
       HAL_GPIO_TogglePin(WDOG_GPIO_Port, WDOG_Pin);
+      CAN_SendMessage(100,104);
+      tim4_num++;
+      if(tim4_num>=100)
+     		 {
+     			 tim4_num=0;
+     		 }*/
 		/*if(AS_State==AS_Emergency)
 		{
 			CAN_Send_AS_Emergency();
@@ -249,7 +263,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		{
 			CAN_Send_EBS_Disable();
 		}*/
-	}
+	//}
 }
 void WS2812_Update(void){
 	static uint16_t data[]={

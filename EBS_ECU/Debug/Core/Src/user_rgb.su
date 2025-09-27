@@ -12,4 +12,4 @@
 ../Core/Src/user_rgb.c:200:6:ASSI_Yellow_Stable	8	static,ignoring_inline_asm
 ../Core/Src/user_rgb.c:206:6:ASSI_Yellow_Blink	4	static
 ../Core/Src/user_rgb.c:211:6:HAL_TIM_PeriodElapsedCallback	16	static
-../Core/Src/user_rgb.c:254:6:WS2812_Update	8	static
+../Core/Src/user_rgb.c:268:6:WS2812_Update	8	static

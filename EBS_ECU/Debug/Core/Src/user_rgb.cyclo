@@ -11,5 +11,5 @@
 ../Core/Src/user_rgb.c:196:6:ASSI_Blue_Blink	1
 ../Core/Src/user_rgb.c:200:6:ASSI_Yellow_Stable	1
 ../Core/Src/user_rgb.c:206:6:ASSI_Yellow_Blink	1
-../Core/Src/user_rgb.c:211:6:HAL_TIM_PeriodElapsedCallback	9
-../Core/Src/user_rgb.c:254:6:WS2812_Update	1
+../Core/Src/user_rgb.c:211:6:HAL_TIM_PeriodElapsedCallback	2
+../Core/Src/user_rgb.c:268:6:WS2812_Update	1
