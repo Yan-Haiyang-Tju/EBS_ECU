@@ -20,7 +20,7 @@ void EBS_Error_Trigger(void)
 {
 
 		EBS_Error_LED_Activate();
-		AS_State=AS_Emergency;
+		//AS_State=AS_Emergency;
 
 }
 

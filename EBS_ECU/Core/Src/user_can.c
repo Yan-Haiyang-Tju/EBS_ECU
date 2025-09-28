@@ -11,6 +11,18 @@
 const uint8_t CAN_AS_Emergency=20;
 const uint8_t CAN_EBS_Disable=21;
 
+const uint8_t CAN_EBS_Send_ID=0x51;
+const uint8_t ACU_To_EBS_ID=0x50;
+
+/**** 状态机对应的数据 ****/
+const uint8_t CAN_Manual_Drv_Status=0x01;
+const uint8_t CAN_AS_OFF_Status=0x02;
+const uint8_t CAN_AS_Ready_Status=0x03;
+const uint8_t CAN_AS_Driving_Status=0x04;
+const uint8_t CAN_AS_Finished_Status=0x05;
+const uint8_t CAN_AS_Emergency_Status=0x06;
+const uint8_t CAN_EBS_ERR_Status=0x07;
+
 void CAN_Init()
 {
 	CAN_Filter0_Config();
@@ -30,39 +42,55 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
    // HAL_UART_Transmit(&huart1, "CAN_ReadMsg Succeed", 19, 10);
     while (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rx_header, rx_data) == HAL_OK)
     {
-if(rx_data[0]==0)
-{
-	HAL_UART_Transmit(&huart1, "CAN_GetMsg00 Succeed", 20, 10);
-}
-    if (rx_header.StdId == 0x101)
+    if (rx_header.StdId == ACU_To_EBS_ID)//CAN消息由域控传来
     {
-    	HAL_UART_Transmit(&huart1, "CAN_GetMsg Succeed", 18, 10);
-    	CAN_SendMessage(102, 15);
-        if(rx_data[0]==30)//AS_Ready
+    	//HAL_UART_Transmit(&huart1, "CAN_GetMsg Succeed", 18, 10);
+        if(rx_data[0]==0x01)//雷达、相机、惯导状态
         {
-        	AS_State=AS_Ready;
+        	if(rx_data[1]==0x01)
+        	{
+        		//存在传感器掉线
+        	}
+        	else if(rx_data[1]==0x02)
+        	{
+        		//三个传感器都没问题
+        	}
+        	else
+        	{
+        		//此处CAN通信出现数据错误
+        	}
         }
-        if(rx_data[0]==31)//AS_Driving
+        else if(rx_data[0]==0x02)//域控发来的指令
         {
-            AS_State=AS_Driving;
+           if(rx_data[1]==0x01)//任务完成，进入AS_Finished状态
+           {
+
+           }
+           else if(rx_data[1]==0x02)//请求直接触发EBS
+           {
+        	   if(rx_data[2]==0x02)
+        	   {
+        		   //校验，确认触发EBS
+        	   }
+        	   else
+        	   {
+        		   //此处CAN通信出现错误
+        	   }
+           }
+           else
+           {
+        	   //此处CAN通信出现错误
+           }
         }
-        if(rx_data[0]==32)//AS_Finished
+        else
         {
-        	AS_State=AS_Finished;
+        	//此处CAN通信出现问题
         }
-        if(rx_data[0]==33)//AS_Emergency
-        {
-        	AS_State=AS_Emergency;
-        }
-        if(rx_data[0]==34)//AS_Off
-        {
-            AS_State=AS_Off;
-        }
+
 
     }
     }
     //CAN_SendBack(rx_data);
-
     // 重新激活中断
     HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
 }
@@ -137,6 +165,106 @@ void CAN_SendMessage(uint8_t Send_Id,uint16_t Value){
     }
 }
 
+void CAN_Send_AS_Status(uint8_t AS_Status){
+
+    CAN_TxHeaderTypeDef TxHeader;
+    uint8_t TxData[8];
+    uint32_t TxMailbox;
+    TxHeader.StdId = CAN_EBS_Send_ID;      //EBS发送CAN_ID
+    TxHeader.RTR = CAN_RTR_DATA; 		// 数据帧
+    TxHeader.IDE = CAN_ID_STD;   		// 使用标准ID
+    TxHeader.DLC = 8;            		// 数据长度码，表示8字节数据
+    TxHeader.TransmitGlobalTime = DISABLE;
+
+    TxData[0] = 0x01;
+    TxData[1] = AS_Status;
+    TxData[2] = 0x00;
+    TxData[3] = 0x00;
+    TxData[4] = 0x00;
+    TxData[5] = 0x00;
+    TxData[6] = 0x00;
+    TxData[7] = 0x00;
+    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+    {
+    	 HAL_UART_Transmit(&huart1, "CAN_Send Error", 14, 10);
+    	// HAL_Delay(50);
+    	//ASSI_Yellow_Blink();
+    }
+    else
+    {
+    	// HAL_Delay(50);
+    	 HAL_UART_Transmit(&huart1, "CAN_Send Succeed", 16, 10);
+
+    }
+}
+
+void CAN_Send_Brake_Sensor_Values(uint8_t Sensor_Type,uint16_t Sensor_Value){
+
+    CAN_TxHeaderTypeDef TxHeader;
+    uint8_t TxData[8];
+    uint32_t TxMailbox;
+    TxHeader.StdId = CAN_EBS_Send_ID;      //EBS发送CAN_ID
+    TxHeader.RTR = CAN_RTR_DATA; 		// 数据帧
+    TxHeader.IDE = CAN_ID_STD;   		// 使用标准ID
+    TxHeader.DLC = 8;            		// 数据长度码，表示8字节数据
+    TxHeader.TransmitGlobalTime = DISABLE;
+
+    TxData[0] = 0x02;
+    TxData[1] = Sensor_Type;
+    TxData[2] = (Sensor_Value>>8);//高八位
+    TxData[3] = (Sensor_Value&0xFF);//低八位
+    TxData[4] = 0x00;
+    TxData[5] = 0x00;
+    TxData[6] = 0x00;
+    TxData[7] = 0x00;
+    if (HAL_CAN_AddTxMessage(&hcan, &TxHeader, TxData, &TxMailbox) != HAL_OK)
+    {
+    	 HAL_UART_Transmit(&huart1, "CAN_Send Error", 14, 10);
+    	// HAL_Delay(50);
+    	//ASSI_Yellow_Blink();
+    }
+    else
+    {
+    	// HAL_Delay(50);
+    	 HAL_UART_Transmit(&huart1, "CAN_Send Succeed", 16, 10);
+
+    }
+}
+
+/****发送状态机状态*****/
+void CAN_Send_Manual_Drv_Status(void)
+{
+	CAN_Send_AS_Status(CAN_Manual_Drv_Status);
+}
+void CAN_Send_AS_OFF_Status(void)
+{
+	CAN_Send_AS_Status(CAN_AS_OFF_Status);
+}
+void CAN_Send_AS_Ready_Status(void)
+{
+	CAN_Send_AS_Status(CAN_AS_Ready_Status);
+}
+void CAN_Send_AS_Driving_Status(void)
+{
+	CAN_Send_AS_Status(CAN_AS_Driving_Status);
+}
+void CAN_Send_AS_Finished_Status(void)
+{
+	CAN_Send_AS_Status(CAN_AS_Finished_Status);
+}
+void CAN_Send_AS_Emergency_Status(void)
+{
+	CAN_Send_AS_Status(CAN_AS_Emergency_Status);
+}
+void CAN_Send_EBS_ERR_Status(void)
+{
+	CAN_Send_AS_Status(CAN_EBS_ERR_Status);
+}
+/****    ****/
+
+
+
+
 void CAN_Send_AS_Emergency(void)
 {
 	CAN_SendMessage(CAN_AS_Emergency,0);
@@ -145,3 +273,6 @@ void CAN_Send_EBS_Disable(void)
 {
 	CAN_SendMessage(CAN_EBS_Disable,0);
 }
+
+
+

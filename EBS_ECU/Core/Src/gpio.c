@@ -76,8 +76,8 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : JITING_DETECT_Pin SHIFANGFA_DETECT_Pin INPUT2_Pin INPUT5_Pin */
-  GPIO_InitStruct.Pin = JITING_DETECT_Pin|SHIFANGFA_DETECT_Pin|INPUT2_Pin|INPUT5_Pin;
+  /*Configure GPIO pins : TS_DETECT_Pin SHIFANGFA_DETECT_Pin INPUT2_Pin INPUT5_Pin */
+  GPIO_InitStruct.Pin = TS_DETECT_Pin|SHIFANGFA_DETECT_Pin|INPUT2_Pin|INPUT5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);

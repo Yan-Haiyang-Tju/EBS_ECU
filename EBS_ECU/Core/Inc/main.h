@@ -85,8 +85,8 @@ void Error_Handler(void);
 #define DCF_JDQ_GPIO_Port GPIOB
 #define EBS_ERR_Pin GPIO_PIN_11
 #define EBS_ERR_GPIO_Port GPIOB
-#define JITING_DETECT_Pin GPIO_PIN_12
-#define JITING_DETECT_GPIO_Port GPIOB
+#define TS_DETECT_Pin GPIO_PIN_12
+#define TS_DETECT_GPIO_Port GPIOB
 #define ASMS_DETECT_Pin GPIO_PIN_13
 #define ASMS_DETECT_GPIO_Port GPIOB
 #define SHIFANGFA_DETECT_Pin GPIO_PIN_14
@@ -111,12 +111,13 @@ void Error_Handler(void);
 #define OUTPUT4_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
-#define AS_Off 0
-#define AS_Ready 1
-#define AS_Driving 2
-#define AS_Emergency 3
-#define AS_Finished 4
-#define Manu_Driving 5
+#define Manual_Drv_Status 1
+#define AS_OFF_Status 2
+#define AS_Ready_Status 3
+#define AS_Driving_Status 4
+#define AS_Finished_Status 5
+#define AS_Emergency_Status 6
+#define EBS_ERR_Status 7
 
 #define Sensor_Error 0
 #define Sensor_OK 1

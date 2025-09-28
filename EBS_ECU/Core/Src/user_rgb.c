@@ -139,17 +139,17 @@ void ASSI_Set_Blue(void)
 
 	for(int j=0;j<Pixel_NUM;j++)
 	    {
-	    	for(int i=0;i<8;i++)
+	    	for(int i=0;i<8;i++)//green
 	    		{
-	    			Pixel_Buf[j][i] = Code0;
+	    			Pixel_Buf[j][i] = Code1;
 
 	    		}
-	    	for(int i=8;i<16;i++)
+	    	for(int i=8;i<16;i++)//red
 	    		{
-	    		    			Pixel_Buf[j][i] = Code1;
+	    		   	Pixel_Buf[j][i] = Code0;
 
 	    		}
-	    	for(int i=16;i<24;i++)
+	    	for(int i=16;i<24;i++)//blue
 	    	{
 	    		Pixel_Buf[j][i] = Code0;
 	    	}
@@ -212,7 +212,22 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM3)//控制ASSI闪烁
 	{
+		 WDOG_num++;
+		 if(WDOG_num==5)
+		 {
+			// ASMS_State=0;
+			 //TS_State=0;
+		 }
+		 if(WDOG_num>=10)
+		 {
+
+		 WDOG_num=0;
+		 //ASMS_State=1;
+		 //TS_State=1;
+		 ASMS_State_Detect();
+		 TS_State_Detect();
 		 HAL_GPIO_TogglePin(WDOG_GPIO_Port, WDOG_Pin);
+		 }
 		 //CAN_SendMessage(100,103);
 		 //tim3_num++;
 		 //if(tim3_num>=100)

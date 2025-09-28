@@ -56,7 +56,7 @@
 /* USER CODE BEGIN PV */
 uint8_t EBS_Able_State=EBS_Disable;
 uint16_t adc_value[4];
-uint8_t AS_State=AS_Off;
+uint8_t AS_State=AS_OFF_Status;
 
 uint8_t Sensor_State=Sensor_OK;
 uint8_t YOUYA_State=YOUYA_Error;
@@ -66,9 +66,14 @@ uint8_t EBS_State=0;
 uint8_t EBS_to_Trigger;
 uint8_t EBS_Error_State;
 uint8_t EBS_Error_to_Trigger;
-uint8_t JITING_State=0;
+
+volatile uint8_t TS_State=0;//0:未激活 1:激活
+volatile uint8_t ASMS_State=0;//0:未激活 1:激活
+
 volatile uint8_t blink_enabled = 0; //0 不闪烁  1蓝灯闪烁  2黄灯闪烁
 volatile uint8_t led_state = 0;
+/*定时器中断计数*/
+int WDOG_num=0;
 int tim3_num=0;
 int tim4_num=0;
 /* USER CODE END PV */
@@ -135,6 +140,8 @@ int main(void)
   User_Init();
   CAN_Init();
   HAL_Delay(100);
+  TS_State=0;
+  ASMS_State=0;
   HAL_TIM_Base_Start_IT(&htim3);
   //HAL_TIM_Base_Start_IT(&htim4);
   //DCF_Activate();
@@ -145,6 +152,8 @@ int main(void)
 
   //ASSI_Set_Blue();
   HAL_Delay(100);
+
+ // ASSI_Set_Blue();
   //WS2812_Update();
  /* BEE_Activate();
   HAL_Delay(100);
