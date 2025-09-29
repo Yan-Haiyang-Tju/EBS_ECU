@@ -10,7 +10,7 @@
 uint32_t get_adc_value(void)
 {
 	HAL_ADC_Start(&hadc1);
-	HAL_ADC_PollForConversion(&hadc1, 5);
+	HAL_ADC_PollForConversion(&hadc1, 1);
     return HAL_ADC_GetValue(&hadc1);
 
 }

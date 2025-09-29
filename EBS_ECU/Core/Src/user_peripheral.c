@@ -22,6 +22,16 @@ void BEE_DeActivate(void)
 	}
 }
 
+void BEE_GO()
+{
+
+}
+
+void BEE_EBS()
+{
+
+}
+
 //电磁阀控制
 void DCF_Activate(void)
 {

@@ -67,15 +67,30 @@ uint8_t EBS_to_Trigger;
 uint8_t EBS_Error_State;
 uint8_t EBS_Error_to_Trigger;
 
+volatile uint8_t EBS_BEE_Status = 0;//0:默认状态 1:EBS鸣笛结束
+volatile uint8_t Driving_Mode = 0;//驾驶模式，来自域控的指令 0:默认 1:无人驾驶任务 2：手动驾驶任务
+volatile uint8_t Go_valid = 0;//0:没有接收到Go信号 1:进入AS_Ready5s后接收到Go信号
+volatile uint8_t Task_Finished = 0;//0:默认状态 1:接收到域控传来的任务完成消息
+volatile uint8_t ASB_State = 0;//0:ASB有问题 1:没问题
 volatile uint8_t TS_State=0;//0:未激活 1:激活
 volatile uint8_t ASMS_State=0;//0:未激活 1:激活
+volatile uint8_t adc_to_convert = 0;//0:不转换 1:转换
+volatile uint8_t Brake_Release_Status = 0;//0:制动未释放 1:制动释放(根据气压、油压)
+volatile uint8_t RES_Status = 0;//0:未触发RES 1:触发RES (来自CAN总线的RES接收端消息)
+volatile uint8_t Brake_Motor = 0;//0:制动电机有问题 1:制动电机没问题
+
 
 volatile uint8_t blink_enabled = 0; //0 不闪烁  1蓝灯闪烁  2黄灯闪烁
-volatile uint8_t led_state = 0;
+volatile uint8_t BEE_enabled = 0;//0：关闭蜂鸣器 1：蜂鸣器EBS鸣笛 2：GO鸣笛
+
+volatile uint8_t led_state = 0;//LED闪烁控制
+volatile uint8_t BEE_Sparkle_state = 0;//蜂鸣器间歇鸣笛控制
+
 /*定时器中断计数*/
 int WDOG_num=0;
 int tim3_num=0;
 int tim4_num=0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -142,6 +157,8 @@ int main(void)
   HAL_Delay(100);
   TS_State=0;
   ASMS_State=0;
+  BEE_enabled=1;
+  //blink_enabled=1;
   HAL_TIM_Base_Start_IT(&htim3);
   //HAL_TIM_Base_Start_IT(&htim4);
   //DCF_Activate();
@@ -173,8 +190,11 @@ int main(void)
      //YOUYA_QIYA_Detect();
      //EBS_Able_Detect();
      //AS_State_Detect();
-
-
+	  if(adc_to_convert==1)
+	  {
+	  adc_to_convert=0;
+	  YOUYA_QIYA_Detect();
+	  }
 	  //HAL_UART_Transmit(&huart1, "CAN_ReadMsg Succeed", 19, 10);
 
 	 // ASSI_Yellow_Stable();

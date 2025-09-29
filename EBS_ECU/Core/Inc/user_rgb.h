@@ -12,9 +12,14 @@
 #include "main.h"
 extern volatile uint8_t blink_enabled;
 extern volatile uint8_t led_state;
+extern volatile uint8_t BEE_Sparkle_state;
+extern volatile uint8_t BEE_enabled;
+
 extern volatile uint8_t ASMS_State;
 extern volatile uint8_t TS_State;
 extern volatile uint8_t ASMS_Pin_State;
+extern volatile uint8_t adc_to_convert;
+
 extern uint8_t EBS_Able_State;
 extern int tim3_num;
 extern int tim4_num;

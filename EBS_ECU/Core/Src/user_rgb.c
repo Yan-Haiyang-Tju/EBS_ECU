@@ -141,7 +141,7 @@ void ASSI_Set_Blue(void)
 	    {
 	    	for(int i=0;i<8;i++)//green
 	    		{
-	    			Pixel_Buf[j][i] = Code1;
+	    			Pixel_Buf[j][i] = Code0;
 
 	    		}
 	    	for(int i=8;i<16;i++)//red
@@ -151,7 +151,7 @@ void ASSI_Set_Blue(void)
 	    		}
 	    	for(int i=16;i<24;i++)//blue
 	    	{
-	    		Pixel_Buf[j][i] = Code0;
+	    		Pixel_Buf[j][i] = Code1;
 	    	}
 	    }
 	 RGB_Flush();
@@ -165,16 +165,16 @@ void ASSI_Set_Yellow(void)
 
 	    	for(int i=0;i<8;i++)
 	    		{
-	    			Pixel_Buf[j][i] = Code1;
+	    			Pixel_Buf[j][i] = Code1;//G
 
 	    		}
 	    	for(int i=8;i<16;i++)
 	    	{
-	    		Pixel_Buf[j][i] = Code0;
+	    		Pixel_Buf[j][i] = Code1;//R
 	    	}
 	    	for(int i=16;i<24;i++)
 	    	{
-	    		    		Pixel_Buf[j][i] = Code1;
+	    		 Pixel_Buf[j][i] = Code0;//B
 	    	}
 	    }
 	 RGB_Flush();
@@ -215,13 +215,65 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		 WDOG_num++;
 		 if(WDOG_num==5)
 		 {
+
+			 if(BEE_enabled==1)//EBS间歇蜂鸣
+						 		{
+				 	 	 	 	 	 BEE_Sparkle_state ^= 1;
+						 		    if(BEE_Sparkle_state)
+						 		    {
+						 		    	BEE_Activate();
+						 		    }
+						 		    if(!BEE_Sparkle_state)
+						 		    {
+						 		    	BEE_DeActivate();
+						 		    }
+
+						 		}
+			else if(BEE_enabled==2)//GO鸣笛
+						 		{
+
+						 		}
+			else if(BEE_enabled==0)
+						 {
+										BEE_DeActivate();
+						 }
 			// ASMS_State=0;
 			 //TS_State=0;
 		 }
-		 if(WDOG_num>=10)
+		 if(WDOG_num>=100)
 		 {
+			 WDOG_num=0;
+			 if(blink_enabled==1)//蓝灯闪烁
+			 		{
+			 			led_state ^= 1;
+			 		    if(led_state)
+			 		    {
+			 		    	 ASSI_Set_Blue();
+			 		    }
+			 		    if(!led_state)
+			 		    {
+			 		    	 ASSI_Set_Black();
+			 		    }
 
-		 WDOG_num=0;
+			 		}
+			 else if(blink_enabled==2)//黄灯闪烁
+			 		{
+			 		    led_state ^= 1;
+			 		    if(led_state)
+			 		   	 {
+			 		   		  ASSI_Set_Yellow();
+			 		     }
+			 		    if(!led_state)
+			 		     {
+			 		   		  ASSI_Set_Black();
+			 		     }
+			 		}
+			 else if(blink_enabled==0)
+			 {
+				 ASSI_Set_Black();
+			 }
+
+		 adc_to_convert=1;
 		 //ASMS_State=1;
 		 //TS_State=1;
 		 ASMS_State_Detect();
