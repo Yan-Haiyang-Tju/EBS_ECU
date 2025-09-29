@@ -7,9 +7,9 @@
 ../Core/Src/user_rgb.c:137:6:ASSI_Set_Blue	24	static
 ../Core/Src/user_rgb.c:160:6:ASSI_Set_Yellow	24	static
 ../Core/Src/user_rgb.c:183:6:ASSI_OFF	8	static
-../Core/Src/user_rgb.c:190:6:ASSI_Blue_Stable	8	static,ignoring_inline_asm
+../Core/Src/user_rgb.c:190:6:ASSI_Blue_Stable	8	static
 ../Core/Src/user_rgb.c:196:6:ASSI_Blue_Blink	4	static
-../Core/Src/user_rgb.c:200:6:ASSI_Yellow_Stable	8	static,ignoring_inline_asm
+../Core/Src/user_rgb.c:200:6:ASSI_Yellow_Stable	8	static
 ../Core/Src/user_rgb.c:206:6:ASSI_Yellow_Blink	4	static
 ../Core/Src/user_rgb.c:211:6:HAL_TIM_PeriodElapsedCallback	16	static
 ../Core/Src/user_rgb.c:335:6:WS2812_Update	8	static

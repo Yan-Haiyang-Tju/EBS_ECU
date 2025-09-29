@@ -91,8 +91,8 @@ void Error_Handler(void);
 #define ASMS_DETECT_GPIO_Port GPIOB
 #define SHIFANGFA_DETECT_Pin GPIO_PIN_14
 #define SHIFANGFA_DETECT_GPIO_Port GPIOB
-#define INPUT2_Pin GPIO_PIN_15
-#define INPUT2_GPIO_Port GPIOB
+#define EBS_LOGIC_POWER_DETECT_Pin GPIO_PIN_15
+#define EBS_LOGIC_POWER_DETECT_GPIO_Port GPIOB
 #define INPUT3_Pin GPIO_PIN_8
 #define INPUT3_GPIO_Port GPIOA
 #define INPUT4_Pin GPIO_PIN_15
@@ -105,10 +105,10 @@ void Error_Handler(void);
 #define WDOG_GPIO_Port GPIOB
 #define ASSI_PWM_Pin GPIO_PIN_6
 #define ASSI_PWM_GPIO_Port GPIOB
-#define OUTPUT3_Pin GPIO_PIN_8
-#define OUTPUT3_GPIO_Port GPIOB
-#define OUTPUT4_Pin GPIO_PIN_9
-#define OUTPUT4_GPIO_Port GPIOB
+#define AS_CLOSE_SDC_Pin GPIO_PIN_8
+#define AS_CLOSE_SDC_GPIO_Port GPIOB
+#define N_ERR_IND_Pin GPIO_PIN_9
+#define N_ERR_IND_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 #define Manual_Drv_Status 1

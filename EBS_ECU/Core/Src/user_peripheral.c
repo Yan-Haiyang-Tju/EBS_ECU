@@ -22,6 +22,8 @@ void BEE_DeActivate(void)
 	}
 }
 
+
+
 void BEE_GO()
 {
 
@@ -60,6 +62,30 @@ void EBS_Error_LED_DeActivate(void)
 {
 
 		HAL_GPIO_WritePin(EBS_ERR_GPIO_Port, EBS_ERR_Pin, GPIO_PIN_SET);
+
+}
+
+void ZHUANXIANG_Motor_Activate(void)//转向电机激活
+{
+
+}
+void ZHUANXIANG_Motor_Deactivate(void)//转向电机关闭
+{
+
+}
+
+void Brake_Motor_Activate(void)//制动电机激活
+{
+
+}
+
+void Brake_Motor_Zhanyong(void)//制动电机占用
+{
+	Brake_Motor_Activate();//首先激活制动电机
+	//给一定制动压力，确保赛车在15%坡度上不发生滚动
+}
+void Brake_Motor_Deactivate(void)//制动电机关闭
+{
 
 }
 

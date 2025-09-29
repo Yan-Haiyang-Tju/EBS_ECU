@@ -56,15 +56,14 @@
 /* USER CODE BEGIN PV */
 uint8_t EBS_Able_State=EBS_Disable;
 uint16_t adc_value[4];
-uint8_t AS_State=AS_OFF_Status;
+uint8_t AS_State=AS_OFF_Status;//状态机状态
 
 uint8_t Sensor_State=Sensor_OK;
 uint8_t YOUYA_State=YOUYA_Error;
 uint8_t QIYA_State=QIYA_Error;
 
-uint8_t EBS_State=0;
+
 uint8_t EBS_to_Trigger;
-uint8_t EBS_Error_State;
 uint8_t EBS_Error_to_Trigger;
 
 volatile uint8_t EBS_BEE_Status = 0;//0:默认状态 1:EBS鸣笛结束
@@ -73,12 +72,13 @@ volatile uint8_t Go_valid = 0;//0:没有接收到Go信号 1:进入AS_Ready5s后�
 volatile uint8_t Task_Finished = 0;//0:默认状态 1:接收到域控传来的任务完成消息
 volatile uint8_t ASB_State = 0;//0:ASB有问题 1:没问题
 volatile uint8_t TS_State=0;//0:未激活 1:激活
-volatile uint8_t ASMS_State=0;//0:未激活 1:激活
+volatile uint8_t ASMS_State=0;//0:未激活 1:激活  无人主开关/无人回路状态
 volatile uint8_t adc_to_convert = 0;//0:不转换 1:转换
 volatile uint8_t Brake_Release_Status = 0;//0:制动未释放 1:制动释放(根据气压、油压)
 volatile uint8_t RES_Status = 0;//0:未触发RES 1:触发RES (来自CAN总线的RES接收端消息)
-volatile uint8_t Brake_Motor = 0;//0:制动电机有问题 1:制动电机没问题
-
+volatile uint8_t Brake_Motor_State = 0;//0:制动电机有问题 1:制动电机没问题
+volatile uint8_t EBS_Trigger_Reason=0;//0:正常触发 1:因为EBS_ERR触发
+volatile uint8_t EBS_LOGIC_POWER_STATE=0;//0:断电 1:有电
 
 volatile uint8_t blink_enabled = 0; //0 不闪烁  1蓝灯闪烁  2黄灯闪烁
 volatile uint8_t BEE_enabled = 0;//0：关闭蜂鸣器 1：蜂鸣器EBS鸣笛 2：GO鸣笛

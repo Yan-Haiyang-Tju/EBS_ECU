@@ -21,8 +21,8 @@ extern volatile uint8_t Task_Finished;//0:默认状态 1:接收到域控传来�
 extern volatile uint8_t EBS_BEE_Status;//0:默认状态 1:EBS鸣笛结束
 extern volatile uint8_t Brake_Release_Status;//0:制动未释放 1:制动释放(根据气压、油压)
 extern volatile uint8_t RES_Status;//0:未触发RES 1:触发RES (来自CAN总线的RES接收端消息)
-extern volatile uint8_t Brake_Motor;//0:制动电机有问题 1:制动电机没问题
-
+extern volatile uint8_t Brake_Motor_State;//0:制动电机有问题 1:制动电机没问题
+extern volatile uint8_t EBS_Trigger_Reason;//0:正常触发 1:因为EBS_ERR触发
 extern uint8_t EBS_Able_State;
 void AS_State_Detect(void);
 void ASMS_State_Detect(void);

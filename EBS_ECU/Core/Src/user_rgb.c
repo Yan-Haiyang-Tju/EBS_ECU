@@ -188,20 +188,20 @@ void ASSI_OFF(void)//无人系统指示灯熄灭
 }
 
 void ASSI_Blue_Stable(void)//无人系统指示灯 蓝灯常亮
-{__disable_irq();
+{
 	   blink_enabled=0;
 	   ASSI_Set_Blue();
-	   __enable_irq();
+
 }
 void ASSI_Blue_Blink(void)//无人系统指示灯  蓝灯闪烁
 {
 	blink_enabled=1;
 }
 void ASSI_Yellow_Stable(void)//无人系统指示灯 黄灯常亮
-{__disable_irq();
+{
 	    blink_enabled=0;
 	    ASSI_Set_Yellow();
-	    __enable_irq();
+
 }
 void ASSI_Yellow_Blink(void)//无人系统指示灯  黄灯闪烁
 {

@@ -55,7 +55,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, TS_JDQ_Pin|DCF_JDQ_Pin|OUTPUT1_Pin|WDOG_Pin
-                          |OUTPUT3_Pin|OUTPUT4_Pin, GPIO_PIN_RESET);
+                          |AS_CLOSE_SDC_Pin|N_ERR_IND_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(EBS_ERR_GPIO_Port, EBS_ERR_Pin, GPIO_PIN_SET);
@@ -68,16 +68,16 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : TS_JDQ_Pin DCF_JDQ_Pin EBS_ERR_Pin OUTPUT1_Pin
-                           WDOG_Pin OUTPUT3_Pin OUTPUT4_Pin */
+                           WDOG_Pin AS_CLOSE_SDC_Pin N_ERR_IND_Pin */
   GPIO_InitStruct.Pin = TS_JDQ_Pin|DCF_JDQ_Pin|EBS_ERR_Pin|OUTPUT1_Pin
-                          |WDOG_Pin|OUTPUT3_Pin|OUTPUT4_Pin;
+                          |WDOG_Pin|AS_CLOSE_SDC_Pin|N_ERR_IND_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TS_DETECT_Pin SHIFANGFA_DETECT_Pin INPUT2_Pin INPUT5_Pin */
-  GPIO_InitStruct.Pin = TS_DETECT_Pin|SHIFANGFA_DETECT_Pin|INPUT2_Pin|INPUT5_Pin;
+  /*Configure GPIO pins : TS_DETECT_Pin SHIFANGFA_DETECT_Pin EBS_LOGIC_POWER_DETECT_Pin INPUT5_Pin */
+  GPIO_InitStruct.Pin = TS_DETECT_Pin|SHIFANGFA_DETECT_Pin|EBS_LOGIC_POWER_DETECT_Pin|INPUT5_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);

@@ -44,38 +44,14 @@ void ASMS_State_Detect(void)//检测ASMS是否闭合，无人回路是否导通
 
 }
 
-void EBS_State_Detect(void)//检测EBS是否可用
-{
-	qiya_compare();
-    if(QIYA_State==QIYA_OK)
-    {
-    	EBS_Able_State=EBS_Enable;
-    }
-    else
-    {
-    	EBS_Able_State=EBS_Disable;
-    }
-}
-void EBS_State_solve()//对EBS状态进行处理，控制EBS故障灯
-{
-	if(EBS_Able_State==EBS_Disable)//EBS_ERR
-	{
-		//点亮EBS故障灯
-		//控制制动电机，完成冗余制动
-	}
-	else
-	{
-		//熄灭EBS故障灯
-	}
 
-}
 
 void ASB_Detect(void)//ASB自检
 {
 	EBS_State_Detect();
 	Brake_Motor_State_Detect();
 	//测试制动电机
-	if(EBS_Able_State==EBS_Enable&&Brake_Motor==1)
+	if(EBS_Able_State==EBS_Enable&&Brake_Motor_State==1)
 	{
 		ASB_State=1;//ASB自检没问题
 	}
@@ -152,19 +128,67 @@ if(TS_State==0)
 
 void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 {
-if(Go_valid==1)//接收到5s延时后的Go信号
-{
-	Go_valid=0;
-	AS_State=AS_Driving_Status;
-}
+	if(EBS_Able_State==EBS_Disable)//EBS出现问题，切换至EBS_ERROR紧急制动
+	{
+		EBS_Trigger_Reason=1;//触发原因是EBS_ERR
+		AS_State=AS_Emergency_Status;
+	}
+	else if(RES_Status==1)//触发了RES
+	{
+		RES_Status=0;
+		EBS_Trigger_Reason=0;//触发原因是正常触发
+		AS_State=AS_Emergency_Status;//
+	}
+	else if(TS_State==0)//安全回路断开，说明按下了急停
+	{
+		EBS_Trigger_Reason=0;//触发原因是正常触发
+		AS_State=AS_Emergency_Status;//
+	}
+	else if(ASMS_State==0)//无人主开关打开，无人回路断开
+	{
+		EBS_Trigger_Reason=0;//触发原因是正常触发
+		AS_State=AS_Emergency_Status;//
+	}
+	else
+	{
+		if(Go_valid==1)//接收到5s延时后的Go信号
+		{
+			Go_valid=0;
+			AS_State=AS_Driving_Status;
+		}
+	}
 }
 
 void AS_Driving_Status_Judge_Conv()//AS_Driving状态下判断状态的转变
 {
-if(Task_Finished==1)
-{
-	AS_State=AS_Finished_Status;
-}
+	if(EBS_Able_State==EBS_Disable)//EBS出现问题，切换至EBS_ERROR紧急制动
+	{
+	EBS_Trigger_Reason=1;//触发原因是EBS_ERR
+	AS_State=AS_Emergency_Status;
+	}
+	else if(RES_Status==1)//触发了RES
+	{
+		RES_Status=0;
+		EBS_Trigger_Reason=0;//触发原因是正常触发
+		AS_State=AS_Emergency_Status;//
+	}
+	else if(TS_State==0)//安全回路断开，说明按下了急停
+	{
+		EBS_Trigger_Reason=0;//触发原因是正常触发
+		AS_State=AS_Emergency_Status;//
+	}
+	else if(ASMS_State==0)//无人主开关打开，无人回路断开
+	{
+		EBS_Trigger_Reason=0;//触发原因是正常触发
+		AS_State=AS_Emergency_Status;//
+	}
+	else
+	{
+		if(Task_Finished==1)//任务完成
+		{
+			AS_State=AS_Finished_Status;//转到AS_Finished状态
+		}
+	}
 }
 
 void AS_Emergency_Status_Judge_Conv()//AS_Emergency状态下判断状态的转变
@@ -177,10 +201,11 @@ if(EBS_BEE_Status==1&&ASMS_State==0&&Brake_Release_Status==1)
 }
 void AS_Finished_Status_Judge_Conv()//AS_Finished状态下判断状态的转变
 {
- if(RES_Status==1)
+ if(RES_Status==1)//接收到了RES信号
  {
 	RES_Status=0;
-	//触发紧急制动，再紧急制动中状态机转换为AS Emergency
+	AS_State=AS_Emergency_Status;//切换到紧急制动状态
+
  }
  else if(ASMS_State==0&&Brake_Release_Status==1)
  {
@@ -221,50 +246,79 @@ void AS_State_Solve(void)
 	 switch(AS_State)
 		 {
 		 case Manual_Drv_Status:
-			 CAN_Send_Manual_Drv_Status();
+			Manual_Drv_Status_Solve();
 			 break;
 		 case AS_OFF_Status:
-			 CAN_Send_AS_OFF_Status();
+			 AS_OFF_Status_Solve();
 		     break;
 		 case AS_Ready_Status:
-			 CAN_Send_AS_Ready_Status();
+			 AS_Ready_Status_Solve();
 			 break;
 		 case AS_Driving_Status:
-			 CAN_Send_AS_Driving_Status();
+			 AS_Driving_Status_Solve();
 			 break;
 		 case AS_Finished_Status:
-			 CAN_Send_AS_Finished_Status();
+			 AS_Finished_Status_Solve();
 			 break;
 		 case AS_Emergency_Status:
-			 CAN_Send_AS_Emergency_Status();
+			 AS_Emergency_Status_Solve();
 			 break;
 
 		 }
 }
 
-void AS_Off_Solve()
+void Manual_Drv_Status_Solve()
 {
- ASSI_OFF();
+	ZHUANXIANG_Motor_Deactivate();
+	Brake_Motor_Deactivate();
+	ASSI_OFF();
 }
-void AS_Ready_Solve()
+void AS_OFF_Status_Solve()
 {
-	ASSI_Yellow_Stable();
+	ZHUANXIANG_Motor_Deactivate();
+	Brake_Motor_Deactivate();
+	ASSI_OFF();
 }
-void AS_Driving_Solve()
+
+void AS_Ready_Status_Solve()
 {
+	ZHUANXIANG_Motor_Activate();
+	Brake_Motor_Zhanyong();
+	ASSI_Yellow_Stable();//绿灯常亮
+
+
+}
+
+void AS_Driving_Status_Solve()
+{
+	Brake_Motor_Activate();
 	ASSI_Yellow_Blink();
-}
-void AS_Emergency_Solve()
-{
-	EBS_Trigger();
+
 
 }
-void AS_Finished_Solve()
+void AS_Finished_Status_Solve()
 {
-	DCF_Activate();
-	ASSI_Blue_Stable();
+	EBS_Trigger();//断开安全回路，触发紧急制动
+	ZHUANXIANG_Motor_Deactivate();//断开转向电机供电
+	ASSI_Blue_Stable();//蓝灯常亮
 }
-void Manu_Driving_Solve()
-{
 
+void AS_Emergency_Status_Solve()
+{
+	if(EBS_Trigger_Reason==0)//正常触发
+	{
+	EBS_Trigger();//断开安全回路，触发紧急制动
+	ASSI_Blue_Blink();//蓝灯闪烁
+	BEE_EBS();//EBS鸣笛
+	}
+	else if(EBS_Trigger_Reason==1)//因为EBS_ERR触发
+	{
+	/*相较于正常情况，需要激活EBS故障灯并进行冗余的行车制动*/
+     EBS_Trigger();//断开安全回路，触发紧急制动
+     Redundant_Driving_Brake_Trigger();//激活冗余的行车制动
+     EBS_Error_LED_Activate();//激活EBS故障灯
+     ASSI_Blue_Blink();//蓝灯闪烁
+     BEE_EBS();//EBS鸣笛
+	}
 }
+
