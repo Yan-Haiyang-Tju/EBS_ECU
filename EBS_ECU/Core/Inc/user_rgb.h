@@ -20,13 +20,18 @@ extern volatile uint8_t ASMS_Pin_State;
 extern volatile uint8_t adc_to_convert;
 extern volatile uint8_t GO_Wait_Count_State;
 extern volatile uint8_t GO_Wait_State;//0:未超过5s 1：超过5s
-
+extern volatile uint8_t R2D_State;//R2D状态
+extern volatile uint8_t EBS_BEE_STATE;//0:EBS不报警 1:EBS报警
 
 extern uint8_t EBS_Able_State;
 extern int tim3_num;
 extern int tim4_num;
 extern int WDOG_num;
+extern int R2D_num;
+extern int EBS_BEE_num;
 extern int GO_WAIT_num;
+extern int BEE_Sparkle_num;
+
 //0码和1码的定义，设置的时CCR寄存器的值
 //由于使用的思PWM输出模式1，计数值<CCR时，输出有效电平-高电平（CubeMX配置默认有效电平为高电平）
 #define CODE_1       (84)       //1码定时器计数次数，控制占空比为84/125 = 66%

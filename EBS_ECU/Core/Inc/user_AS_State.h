@@ -25,7 +25,11 @@ extern volatile uint8_t Brake_Motor_State;//0:制动电机有问题 1:制动电�
 extern volatile uint8_t EBS_Trigger_Reason;//0:正常触发 1:因为EBS_ERR触发
 extern volatile uint8_t GO_Wait_Count_State;//是否开始GO计数 0:关闭GO计时 1:开始GO计时
 extern volatile uint8_t GO_Wait_State;//0:未超过5s 1：超过5s
+extern volatile uint8_t R2D_State;//R2D状态
+extern volatile uint8_t EBS_BEE_STATE;//0:EBS不报警 1:EBS报警
+
 extern uint8_t EBS_Able_State;
+
 void AS_State_Detect(void);
 void ASMS_State_Detect(void);
 void TS_State_Detect(void);

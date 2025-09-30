@@ -66,7 +66,7 @@ uint8_t QIYA_State=QIYA_Error;
 uint8_t EBS_to_Trigger;
 uint8_t EBS_Error_to_Trigger;
 
-volatile uint8_t EBS_BEE_Status = 0;//0:默认状态 1:EBS鸣笛结束
+
 volatile uint8_t Driving_Mode_From_ACU = 0;//驾驶模式，来自域控的指令 0:默认 1:手动驾驶任务 2：无人驾驶任务
 //默认状态将AS_Driving_Mode引脚置1，AS_CLOSE_SDC引脚置0
 //无人驾驶状态将将AS_Driving_Mode引脚置1，AS_CLOSE_SDC引脚置1
@@ -84,9 +84,11 @@ volatile uint8_t EBS_Trigger_Reason=0;//0:正常触发 1:因为EBS_ERR触发
 volatile uint8_t EBS_LOGIC_POWER_STATE=0;//0:断电 1:有电
 
 volatile uint8_t blink_enabled = 0; //0 不闪烁  1蓝灯闪烁  2黄灯闪烁
-volatile uint8_t BEE_enabled = 0;//0：关闭蜂鸣器 1：蜂鸣器EBS鸣笛 2：GO鸣笛
+volatile uint8_t BEE_enabled = 0;//0：关闭蜂鸣器 1：EBS鸣笛 2：R2D鸣笛
 volatile uint8_t GO_Wait_State = 0;//0:未超过5s 1：超过5s
 volatile uint8_t GO_Wait_Count_State = 0;//0:关闭GO计时 1:开始GO计时
+volatile uint8_t R2D_State=0;//是否处于R2D状态 0：未处于 1：处于
+volatile uint8_t EBS_BEE_STATE=0;//0:EBS不报警 1:EBS报警
 
 volatile uint8_t led_state = 0;//LED闪烁控制
 volatile uint8_t BEE_Sparkle_state = 0;//蜂鸣器间歇鸣笛控制
@@ -99,6 +101,9 @@ int tim4_num=0;
 int R2D_MINGDI_num=0;//R2D鸣笛持续时间计数 鸣笛持续时间1-3s
 int EBS_MINGDI_num=0;//EBS鸣笛持续时间计数  鸣笛持续时间8-10s
 int GO_WAIT_num=0;//进入AS_Ready后，等待AS_Driving的时间计数 等待时间5s
+int R2D_num=0;//R2D鸣笛时间的计数
+int EBS_BEE_num=0;//EBS鸣笛时间的计数
+int BEE_Sparkle_num=0; //控制EBS鸣笛频率和占空比的计数
 
 /* USER CODE END PV */
 

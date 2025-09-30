@@ -214,7 +214,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	{
 		//TIM3 10ms进一次中断  主频72Mhz 预分频7200 计数器100
 		 WDOG_num++;
-
+		 BEE_Sparkle_num++;
+		 /*GO计时，>5s*/
 		 if(GO_Wait_Count_State==1)//GO计时是开启的
 		 {
 			 GO_WAIT_num++;
@@ -225,34 +226,55 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				 GO_Wait_Count_State=0;//停止计数
 			 }
 		 }
-
-		 if(WDOG_num==5)
+         /*R2D定时 2-3s*/
+		 if(R2D_State==1)//现在处于R2D鸣笛状态
 		 {
-
-			 if(BEE_enabled==1)//EBS间歇蜂鸣
-						 		{
-				 	 	 	 	 	 BEE_Sparkle_state ^= 1;
-						 		    if(BEE_Sparkle_state)
-						 		    {
-						 		    	BEE_Activate();
-						 		    }
-						 		    if(!BEE_Sparkle_state)
-						 		    {
-						 		    	BEE_DeActivate();
-						 		    }
-
-						 		}
-			else if(BEE_enabled==2)//GO鸣笛
-						 		{
-
-						 		}
-			else if(BEE_enabled==0)
-						 {
-										BEE_DeActivate();
-						 }
-			// ASMS_State=0;
-			 //TS_State=0;
+			 R2D_num++;
+			 if(R2D_num>=200)//R2D鸣笛保持2-3s
+			 {
+				 R2D_num=0;
+				 R2D_State=0;//R2D_State置0，取消鸣笛
+			 }
 		 }
+		 /*EBS报警定时 8-10s */
+		 if(EBS_BEE_STATE==1)//现在处于EBS报警鸣笛状态
+		 {
+			 EBS_BEE_num++;
+			 if(EBS_BEE_num>=900)//超过9s
+			 {
+				 EBS_BEE_num=0;
+				 EBS_BEE_STATE=0;
+				 BEE_enabled=0;
+
+			 }
+		 }
+
+		 if(BEE_Sparkle_num>=25)//0.25s进行一次状态转变，使得EBS鸣笛的频率为2Hz，占空比为50%
+		 {
+			 BEE_Sparkle_num=0;
+			 if(BEE_enabled==1)//EBS间歇蜂鸣
+			   {
+				 BEE_Sparkle_state ^= 1;
+				 if(BEE_Sparkle_state)
+				 	{
+					BEE_Activate();
+					 }
+				 if(!BEE_Sparkle_state)
+				  {
+				    BEE_DeActivate();
+				  }
+
+				}
+			else if(BEE_enabled==2)//GO鸣笛
+			   {
+				BEE_Activate();
+				}
+			else if(BEE_enabled==0)//停止鸣笛
+			   {
+				BEE_DeActivate();
+			   }
+		 }
+
 		 if(WDOG_num>=10)
 		 {
 			 //0.1s计数清零一次

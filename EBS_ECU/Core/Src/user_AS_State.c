@@ -111,12 +111,13 @@ if(ASMS_State==1&&TS_State==1&&ASB_State==1&&Driving_Mode_From_ACU==2)
 	GO_WAIT_num=0;//计数归零
 	GO_Wait_State=0;//超过5s标志归零
 	Go_valid=0;//GO_valid置否
-	if(GO_Wait_Count_State=0)//切换到AS_Ready就开启GO定时
-		{
-			GO_Wait_Count_State=1;//开启GO定时
-		}
+
 	AS_State=AS_Ready_Status;//切换到AS_Ready状态
 
+	if(GO_Wait_Count_State=0)//切换到AS_Ready就开启GO定时
+	{
+		GO_Wait_Count_State=1;//开启GO定时
+	}
 
 }
 
@@ -141,6 +142,9 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 	{
 		EBS_Trigger_Reason=1;//触发原因是EBS_ERR
 		AS_State=AS_Emergency_Status;
+		EBS_BEE_STATE=1;//EBS鸣笛报警状态
+		BEE_enabled=2;//开启EBS鸣笛
+
 		GO_Wait_Count_State=0;//停止GO计数
 		GO_WAIT_num=0;//GO计数清零
 		GO_Wait_State=0;
@@ -150,6 +154,9 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 		RES_Status=0;
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		EBS_BEE_STATE=1;//EBS鸣笛报警状态
+		BEE_enabled=2;//开启EBS鸣笛
+
 		GO_Wait_Count_State=0;//停止GO计数
 		GO_WAIT_num=0;//GO计数清零
 		GO_Wait_State=0;
@@ -158,6 +165,9 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 	{
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		EBS_BEE_STATE=1;//EBS鸣笛报警状态
+		BEE_enabled=2;//开启EBS鸣笛
+
 		GO_Wait_Count_State=0;//停止GO计数
 		GO_WAIT_num=0;//GO计数清零
 		GO_Wait_State=0;
@@ -166,6 +176,9 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 	{
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		EBS_BEE_STATE=1;//EBS鸣笛报警状态
+		BEE_enabled=2;//开启EBS鸣笛
+
 		GO_Wait_Count_State=0;//停止GO计数
 		GO_WAIT_num=0;//GO计数清零
 		GO_Wait_State=0;
@@ -177,6 +190,8 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 			AS_State=AS_Driving_Status;
 			Go_valid=0;
 			GO_Wait_State=0;
+			R2D_State=1;//切换到AS_Driving时，把R2D_State置1,开启R2D定时
+			R2D_num=0;//切换到AS_Driving时，把R2D_num归零
 		}
 	}
 }
@@ -187,38 +202,64 @@ void AS_Driving_Status_Judge_Conv()//AS_Driving状态下判断状态的转变
 	{
 	EBS_Trigger_Reason=1;//触发原因是EBS_ERR
 	AS_State=AS_Emergency_Status;
+	EBS_BEE_STATE=1;//EBS鸣笛报警状态
+	BEE_enabled=2;//开启EBS鸣笛
+
+	R2D_num=0;//R2D计时归零，防止意外
+	R2D_State=0;//R2D_State置否
 	}
 	else if(RES_Status==1)//触发了RES
 	{
 		RES_Status=0;
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		EBS_BEE_STATE=1;//EBS鸣笛报警状态
+		BEE_enabled=2;//开启EBS鸣笛
+
+
+		R2D_num=0;//R2D计时归零，防止意外
+		R2D_State=0;//R2D_State置否
 	}
 	else if(TS_State==0)//安全回路断开，说明按下了急停
 	{
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		EBS_BEE_STATE=1;//EBS鸣笛报警状态
+		BEE_enabled=2;//开启EBS鸣笛
+
+		R2D_num=0;//R2D计时归零，防止意外
+		R2D_State=0;//R2D_State置否
 	}
 	else if(ASMS_State==0)//无人主开关打开，无人回路断开
 	{
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		EBS_BEE_STATE=1;//EBS鸣笛报警状态
+		BEE_enabled=2;//开启EBS鸣笛
+
+		R2D_num=0;//R2D计时归零，防止意外
+		R2D_State=0;//R2D_State置否
 	}
 	else
 	{
 		if(Task_Finished==1)//任务完成
 		{
 			AS_State=AS_Finished_Status;//转到AS_Finished状态
+			R2D_num=0;//R2D计时归零，防止意外
+			R2D_State=0;//R2D_State置否
+			BEE_enabled=0;//关闭鸣笛
 		}
 	}
 }
 
 void AS_Emergency_Status_Judge_Conv()//AS_Emergency状态下判断状态的转变
 {
-if(EBS_BEE_Status==1&&ASMS_State==0&&Brake_Release_Status==1)
+if(EBS_BEE_STATE==0&&ASMS_State==0&&Brake_Release_Status==1)//EBS_BEE_STATE==0：EBS鸣笛结束
 {
-	EBS_BEE_Status=0;
+
 	AS_State=AS_OFF_Status;
+
+
 }
 }
 void AS_Finished_Status_Judge_Conv()//AS_Finished状态下判断状态的转变
@@ -227,6 +268,8 @@ void AS_Finished_Status_Judge_Conv()//AS_Finished状态下判断状态的转变
  {
 	RES_Status=0;
 	AS_State=AS_Emergency_Status;//切换到紧急制动状态
+	EBS_BEE_STATE=1;//EBS鸣笛报警状态
+	BEE_enabled=2;//开启EBS鸣笛
 
  }
  else if(ASMS_State==0&&Brake_Release_Status==1)
@@ -307,16 +350,24 @@ void AS_Ready_Status_Solve()
 
 	ZHUANXIANG_Motor_Activate();
 	Brake_Motor_Zhanyong();
-	ASSI_Yellow_Stable();//绿灯常亮
+	ASSI_Yellow_Stable();//黄灯常亮
 
 
 }
 
 void AS_Driving_Status_Solve()
 {
+	if(R2D_State==1)//处于R2D鸣笛状态，鸣笛
+	{
+		BEE_enabled=2;//BEE_enabled=2为R2D鸣笛
+	}
+	else if(R2D_State==0)//R2D鸣笛状态结束，不鸣笛
+	{
+		BEE_enabled=0;//0：关闭蜂鸣器 1：蜂鸣器EBS鸣笛 2：R2D鸣笛
+	}
+
 	Brake_Motor_Activate();
 	ASSI_Yellow_Blink();
-
 
 }
 void AS_Finished_Status_Solve()
@@ -328,6 +379,24 @@ void AS_Finished_Status_Solve()
 
 void AS_Emergency_Status_Solve()
 {
+
+	if(EBS_BEE_STATE==0)//0:不报警
+	{
+			if(BEE_enabled!=0)
+			{
+				BEE_enabled=0;
+			}
+	}
+	else if(EBS_BEE_STATE==1)//1:报警
+	{
+		if(BEE_enabled!=1)
+		{
+			BEE_enabled=1;//EBS鸣笛
+		}
+	}
+
+
+
 	if(EBS_Trigger_Reason==0)//正常触发
 	{
 	EBS_Trigger();//断开安全回路，触发紧急制动
