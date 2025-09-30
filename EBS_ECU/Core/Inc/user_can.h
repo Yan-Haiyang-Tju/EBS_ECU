@@ -10,6 +10,9 @@
 #include "main.h"
 
 extern uint8_t AS_State;
+extern volatile uint8_t Driving_Mode_From_ACU;
+extern volatile uint8_t GO_Wait_State;//0:未超过5s 1：超过5s
+extern volatile uint8_t Go_valid;//0:没有接收到Go信号 1:进入AS_Ready5s后接收到Go信号
 extern UART_HandleTypeDef huart1;
 
 void CAN_Init();

@@ -14,6 +14,8 @@ void EBS_Trigger(void)
 
 }
 
+
+
 void EBS_LOGIC_Power_Detect()
 {
 	if(HAL_GPIO_ReadPin(EBS_LOGIC_POWER_DETECT_GPIO_Port, EBS_LOGIC_POWER_DETECT_Pin)==GPIO_PIN_SET)//有电
@@ -60,6 +62,16 @@ void Redundant_Driving_Brake_Trigger()
 
 
 /******与EBS逻辑电路的交互*******/
+
+void AS_DRIVING_MODE_UP(void)
+{
+	HAL_GPIO_WritePin(AS_DRIVING_MODE_GPIO_Port, AS_DRIVING_MODE_Pin,GPIO_PIN_SET);//AS_DRIVING_MODE拉高
+}
+
+void AS_DRIVING_MODE_DOWN  (void)
+{
+	HAL_GPIO_WritePin(AS_DRIVING_MODE_GPIO_Port,AS_DRIVING_MODE_Pin,GPIO_PIN_RESET);//AS_DRIVING_MODE拉低
+}
 
 void AS_CLOSE_SDC_UP(void)
 {

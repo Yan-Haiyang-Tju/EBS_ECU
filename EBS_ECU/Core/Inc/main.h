@@ -99,8 +99,8 @@ void Error_Handler(void);
 #define INPUT4_GPIO_Port GPIOA
 #define INPUT5_Pin GPIO_PIN_3
 #define INPUT5_GPIO_Port GPIOB
-#define OUTPUT1_Pin GPIO_PIN_4
-#define OUTPUT1_GPIO_Port GPIOB
+#define AS_DRIVING_MODE_Pin GPIO_PIN_4
+#define AS_DRIVING_MODE_GPIO_Port GPIOB
 #define WDOG_Pin GPIO_PIN_5
 #define WDOG_GPIO_Port GPIOB
 #define ASSI_PWM_Pin GPIO_PIN_6

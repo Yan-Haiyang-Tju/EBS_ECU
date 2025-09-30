@@ -12,7 +12,7 @@
 
 extern uint8_t AS_State;
 
-extern volatile uint8_t Driving_Mode;//域控发来的驾驶模式指令
+extern volatile uint8_t Driving_Mode_From_ACU;//域控发来的驾驶模式指令0:默认 1:手动驾驶任务 2：无人驾驶任务
 extern volatile uint8_t ASB_State;//ASB状态
 extern volatile uint8_t TS_State;//驱动系统状态
 extern volatile uint8_t ASMS_State;//无人主开关状态
@@ -23,6 +23,8 @@ extern volatile uint8_t Brake_Release_Status;//0:制动未释放 1:制动释放(
 extern volatile uint8_t RES_Status;//0:未触发RES 1:触发RES (来自CAN总线的RES接收端消息)
 extern volatile uint8_t Brake_Motor_State;//0:制动电机有问题 1:制动电机没问题
 extern volatile uint8_t EBS_Trigger_Reason;//0:正常触发 1:因为EBS_ERR触发
+extern volatile uint8_t GO_Wait_Count_State;//是否开始GO计数 0:关闭GO计时 1:开始GO计时
+extern volatile uint8_t GO_Wait_State;//0:未超过5s 1：超过5s
 extern uint8_t EBS_Able_State;
 void AS_State_Detect(void);
 void ASMS_State_Detect(void);

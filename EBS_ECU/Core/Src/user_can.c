@@ -13,7 +13,7 @@ const uint8_t CAN_EBS_Disable=21;
 
 const uint8_t CAN_EBS_Send_ID=0x51;
 const uint8_t ACU_To_EBS_ID=0x50;
-
+const uint8_t RES_ID=0x53;
 /**** 状态机对应的数据 ****/
 const uint8_t CAN_Manual_Drv_Status=0x01;
 const uint8_t CAN_AS_OFF_Status=0x02;
@@ -42,6 +42,17 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
    // HAL_UART_Transmit(&huart1, "CAN_ReadMsg Succeed", 19, 10);
     while (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &rx_header, rx_data) == HAL_OK)
     {
+
+    if(rx_header.StdId == RES_ID)//消息从RES发来
+    {
+       if(GO_Wait_State==1)//超过5s
+       {
+    	   if(rx_data[0]==0x01)//判断消息内容
+    	   {
+    		   Go_valid=1;//5s后接收到了GO信号
+    	   }
+       }
+    }
     if (rx_header.StdId == ACU_To_EBS_ID)//CAN消息由域控传来
     {
     	//HAL_UART_Transmit(&huart1, "CAN_GetMsg Succeed", 18, 10);
@@ -76,6 +87,17 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
         	   {
         		   //此处CAN通信出现错误
         	   }
+           }
+           else if(rx_data[1]==0x03)
+           {
+
+        	   //手动驾驶模式选择
+        	   Driving_Mode_From_ACU=1;
+           }
+           else if(rx_data[1]==0x04)
+           {
+        	   //无人驾驶模式选择
+        	   Driving_Mode_From_ACU=2;
            }
            else
            {

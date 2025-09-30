@@ -105,13 +105,22 @@ void AS_State_Detect_Conv(void)
 
 void AS_OFF_Judge_Conv()//AS_OFF状态下判断状态的转变
 {
-if(ASMS_State==1&&TS_State==1&&ASB_State==1&&Driving_Mode==1)
+if(ASMS_State==1&&TS_State==1&&ASB_State==1&&Driving_Mode_From_ACU==2)
 {
-	/*转换到AS_Ready状态*/
-	AS_State=AS_Ready_Status;
+	/*转换到AS_Ready状态  进入AS_Ready前，把计数归零，GO_valid置否，开启GO计数*/
+	GO_WAIT_num=0;//计数归零
+	GO_Wait_State=0;//超过5s标志归零
+	Go_valid=0;//GO_valid置否
+	if(GO_Wait_Count_State=0)//切换到AS_Ready就开启GO定时
+		{
+			GO_Wait_Count_State=1;//开启GO定时
+		}
+	AS_State=AS_Ready_Status;//切换到AS_Ready状态
+
+
 }
 
-else if(ASMS_State==0&&EBS_Able_State==EBS_Disable&&TS_State==1&&Driving_Mode==2)
+else if(ASMS_State==0&&EBS_Able_State==EBS_Disable&&TS_State==1&&Driving_Mode_From_ACU==1)
 {
 	/*转换到Manual_Driving状态*/
 	AS_State=Manual_Drv_Status;
@@ -132,29 +141,42 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 	{
 		EBS_Trigger_Reason=1;//触发原因是EBS_ERR
 		AS_State=AS_Emergency_Status;
+		GO_Wait_Count_State=0;//停止GO计数
+		GO_WAIT_num=0;//GO计数清零
+		GO_Wait_State=0;
 	}
 	else if(RES_Status==1)//触发了RES
 	{
 		RES_Status=0;
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		GO_Wait_Count_State=0;//停止GO计数
+		GO_WAIT_num=0;//GO计数清零
+		GO_Wait_State=0;
 	}
 	else if(TS_State==0)//安全回路断开，说明按下了急停
 	{
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		GO_Wait_Count_State=0;//停止GO计数
+		GO_WAIT_num=0;//GO计数清零
+		GO_Wait_State=0;
 	}
 	else if(ASMS_State==0)//无人主开关打开，无人回路断开
 	{
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
+		GO_Wait_Count_State=0;//停止GO计数
+		GO_WAIT_num=0;//GO计数清零
+		GO_Wait_State=0;
 	}
-	else
+	else//不进入AS_Emergency
 	{
 		if(Go_valid==1)//接收到5s延时后的Go信号
 		{
-			Go_valid=0;
 			AS_State=AS_Driving_Status;
+			Go_valid=0;
+			GO_Wait_State=0;
 		}
 	}
 }
@@ -282,6 +304,7 @@ void AS_OFF_Status_Solve()
 
 void AS_Ready_Status_Solve()
 {
+
 	ZHUANXIANG_Motor_Activate();
 	Brake_Motor_Zhanyong();
 	ASSI_Yellow_Stable();//绿灯常亮
@@ -322,3 +345,28 @@ void AS_Emergency_Status_Solve()
 	}
 }
 
+
+
+void Task_From_ACU_Solve(void)
+{//在AS_OFF状态下处理域控传来的任务
+	//AS_DRIVING_MODE 0:默认 1:手动驾驶任务 2：无人驾驶任务
+	//默认状态将AS_Driving_Mode引脚置1，AS_CLOSE_SDC引脚置0
+	//手动驾驶状态将AS_Driving_Mode引脚置0，AS_CLOSE_SDC引脚置0
+	//无人驾驶状态将将AS_Driving_Mode引脚置1，AS_CLOSE_SDC引脚置1
+
+	if(Driving_Mode_From_ACU==0)//默认状态
+	{
+		AS_DRIVING_MODE_UP();
+		AS_CLOSE_SDC_DOWN();
+	}
+	else if(Driving_Mode_From_ACU==1)//手动驾驶任务
+	{
+		AS_DRIVING_MODE_DOWN();
+		AS_CLOSE_SDC_DOWN();
+	}
+	else if(Driving_Mode_From_ACU==2)//无人驾驶任务
+	{
+		AS_DRIVING_MODE_UP();
+		AS_CLOSE_SDC_UP();
+	}
+}

@@ -54,7 +54,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, BEE_JDQ_Pin|OUTPUT5_Pin|OUTPUT6_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, TS_JDQ_Pin|DCF_JDQ_Pin|OUTPUT1_Pin|WDOG_Pin
+  HAL_GPIO_WritePin(GPIOB, TS_JDQ_Pin|DCF_JDQ_Pin|AS_DRIVING_MODE_Pin|WDOG_Pin
                           |AS_CLOSE_SDC_Pin|N_ERR_IND_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -67,9 +67,9 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TS_JDQ_Pin DCF_JDQ_Pin EBS_ERR_Pin OUTPUT1_Pin
+  /*Configure GPIO pins : TS_JDQ_Pin DCF_JDQ_Pin EBS_ERR_Pin AS_DRIVING_MODE_Pin
                            WDOG_Pin AS_CLOSE_SDC_Pin N_ERR_IND_Pin */
-  GPIO_InitStruct.Pin = TS_JDQ_Pin|DCF_JDQ_Pin|EBS_ERR_Pin|OUTPUT1_Pin
+  GPIO_InitStruct.Pin = TS_JDQ_Pin|DCF_JDQ_Pin|EBS_ERR_Pin|AS_DRIVING_MODE_Pin
                           |WDOG_Pin|AS_CLOSE_SDC_Pin|N_ERR_IND_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;

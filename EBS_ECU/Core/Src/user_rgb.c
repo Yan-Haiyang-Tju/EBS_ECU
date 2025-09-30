@@ -212,7 +212,20 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim->Instance == TIM3)//控制ASSI闪烁
 	{
+		//TIM3 10ms进一次中断  主频72Mhz 预分频7200 计数器100
 		 WDOG_num++;
+
+		 if(GO_Wait_Count_State==1)//GO计时是开启的
+		 {
+			 GO_WAIT_num++;
+			 if(GO_WAIT_num>=530)//超过5s
+			 {
+				 GO_WAIT_num=0;
+				 GO_Wait_State=1;//说明超过5s
+				 GO_Wait_Count_State=0;//停止计数
+			 }
+		 }
+
 		 if(WDOG_num==5)
 		 {
 
@@ -240,8 +253,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			// ASMS_State=0;
 			 //TS_State=0;
 		 }
-		 if(WDOG_num>=100)
+		 if(WDOG_num>=10)
 		 {
+			 //0.1s计数清零一次
 			 WDOG_num=0;
 			 if(blink_enabled==1)//蓝灯闪烁
 			 		{
