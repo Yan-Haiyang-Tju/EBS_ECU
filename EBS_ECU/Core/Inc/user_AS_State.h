@@ -10,6 +10,8 @@
 
 #include "main.h"
 
+extern uint16_t adc_value[4];
+
 extern uint8_t AS_State;
 
 extern volatile uint8_t Driving_Mode_From_ACU;//域控发来的驾驶模式指令0:默认 1:手动驾驶任务 2：无人驾驶任务
@@ -28,10 +30,18 @@ extern volatile uint8_t GO_Wait_State;//0:未超过5s 1：超过5s
 extern volatile uint8_t R2D_State;//R2D状态
 extern volatile uint8_t EBS_BEE_STATE;//0:EBS不报警 1:EBS报警
 
+extern volatile uint8_t EBS_Trigger_State;//0:EBS未触发 1:EBS触发状态
+extern volatile uint8_t EBS_Test_State;//0:EBS未触发或触发未超过2s，不能进行释放检测 1:超过2s，可以进行释放检测
+
 extern uint8_t EBS_Able_State;
 
+extern int EBS_Trigger_num;
 void AS_State_Detect(void);
 void ASMS_State_Detect(void);
 void TS_State_Detect(void);
+void AS_State_Detect_Conv(void);
+void AS_State_Send(void);
+void AS_State_Solve(void);
+void Task_From_ACU_Solve(void);
 
 #endif /* INC_USER_AS_STATE_H_ */

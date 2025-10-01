@@ -72,7 +72,7 @@ void AS_State_Detect_Conv(void)
 	TS_State_Detect();
 	ASMS_State_Detect();
 	EBS_State_Detect();
-	ASB_Detect();
+	//ASB_Detect();
 
 	/*根据车辆状态判断、转变当前状态机状态*/
 	if(AS_State==AS_OFF_Status)
@@ -128,11 +128,12 @@ else if(ASMS_State==0&&EBS_Able_State==EBS_Disable&&TS_State==1&&Driving_Mode_Fr
 }
 }
 
+
 void Manual_Drv_Status_Judge_Conv()//Manual_Drv状态下判断状态的转变
 {
 if(TS_State==0)
 {
-	AS_State=AS_OFF_Status;
+	Convert_To_AS_OFF();
 }
 }
 
@@ -143,7 +144,7 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 		EBS_Trigger_Reason=1;//触发原因是EBS_ERR
 		AS_State=AS_Emergency_Status;
 		EBS_BEE_STATE=1;//EBS鸣笛报警状态
-		BEE_enabled=2;//开启EBS鸣笛
+		BEE_enabled=1;//开启EBS鸣笛
 
 		GO_Wait_Count_State=0;//停止GO计数
 		GO_WAIT_num=0;//GO计数清零
@@ -155,7 +156,7 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
 		EBS_BEE_STATE=1;//EBS鸣笛报警状态
-		BEE_enabled=2;//开启EBS鸣笛
+		BEE_enabled=1;//开启EBS鸣笛
 
 		GO_Wait_Count_State=0;//停止GO计数
 		GO_WAIT_num=0;//GO计数清零
@@ -166,7 +167,7 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
 		EBS_BEE_STATE=1;//EBS鸣笛报警状态
-		BEE_enabled=2;//开启EBS鸣笛
+		BEE_enabled=1;//开启EBS鸣笛
 
 		GO_Wait_Count_State=0;//停止GO计数
 		GO_WAIT_num=0;//GO计数清零
@@ -177,7 +178,7 @@ void AS_Ready_Status_Judge_Conv()//AS_Ready状态下判断状态的转变
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
 		EBS_BEE_STATE=1;//EBS鸣笛报警状态
-		BEE_enabled=2;//开启EBS鸣笛
+		BEE_enabled=1;//开启EBS鸣笛
 
 		GO_Wait_Count_State=0;//停止GO计数
 		GO_WAIT_num=0;//GO计数清零
@@ -203,7 +204,7 @@ void AS_Driving_Status_Judge_Conv()//AS_Driving状态下判断状态的转变
 	EBS_Trigger_Reason=1;//触发原因是EBS_ERR
 	AS_State=AS_Emergency_Status;
 	EBS_BEE_STATE=1;//EBS鸣笛报警状态
-	BEE_enabled=2;//开启EBS鸣笛
+	BEE_enabled=1;//开启EBS鸣笛
 
 	R2D_num=0;//R2D计时归零，防止意外
 	R2D_State=0;//R2D_State置否
@@ -214,7 +215,7 @@ void AS_Driving_Status_Judge_Conv()//AS_Driving状态下判断状态的转变
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
 		EBS_BEE_STATE=1;//EBS鸣笛报警状态
-		BEE_enabled=2;//开启EBS鸣笛
+		BEE_enabled=1;//开启EBS鸣笛
 
 
 		R2D_num=0;//R2D计时归零，防止意外
@@ -225,7 +226,7 @@ void AS_Driving_Status_Judge_Conv()//AS_Driving状态下判断状态的转变
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
 		EBS_BEE_STATE=1;//EBS鸣笛报警状态
-		BEE_enabled=2;//开启EBS鸣笛
+		BEE_enabled=1;//开启EBS鸣笛
 
 		R2D_num=0;//R2D计时归零，防止意外
 		R2D_State=0;//R2D_State置否
@@ -235,7 +236,7 @@ void AS_Driving_Status_Judge_Conv()//AS_Driving状态下判断状态的转变
 		EBS_Trigger_Reason=0;//触发原因是正常触发
 		AS_State=AS_Emergency_Status;//
 		EBS_BEE_STATE=1;//EBS鸣笛报警状态
-		BEE_enabled=2;//开启EBS鸣笛
+		BEE_enabled=1;//开启EBS鸣笛
 
 		R2D_num=0;//R2D计时归零，防止意外
 		R2D_State=0;//R2D_State置否
@@ -244,6 +245,7 @@ void AS_Driving_Status_Judge_Conv()//AS_Driving状态下判断状态的转变
 	{
 		if(Task_Finished==1)//任务完成
 		{
+			Task_Finished=0;
 			AS_State=AS_Finished_Status;//转到AS_Finished状态
 			R2D_num=0;//R2D计时归零，防止意外
 			R2D_State=0;//R2D_State置否
@@ -257,7 +259,7 @@ void AS_Emergency_Status_Judge_Conv()//AS_Emergency状态下判断状态的转�
 if(EBS_BEE_STATE==0&&ASMS_State==0&&Brake_Release_Status==1)//EBS_BEE_STATE==0：EBS鸣笛结束
 {
 
-	AS_State=AS_OFF_Status;
+	Convert_To_AS_OFF();
 
 
 }
@@ -269,12 +271,12 @@ void AS_Finished_Status_Judge_Conv()//AS_Finished状态下判断状态的转变
 	RES_Status=0;
 	AS_State=AS_Emergency_Status;//切换到紧急制动状态
 	EBS_BEE_STATE=1;//EBS鸣笛报警状态
-	BEE_enabled=2;//开启EBS鸣笛
+	BEE_enabled=1;//开启EBS鸣笛
 
  }
  else if(ASMS_State==0&&Brake_Release_Status==1)
  {
-	 AS_State=AS_OFF_Status;
+	 Convert_To_AS_OFF();
  }
 
 }
@@ -439,3 +441,32 @@ void Task_From_ACU_Solve(void)
 		AS_CLOSE_SDC_UP();
 	}
 }
+
+void Convert_To_AS_OFF(void)
+{
+	AS_State=AS_OFF_Status;
+	Driving_Mode_From_ACU=0;//任何情况下转到AS_OFF状态都要把Driving_Mode_From_ACU置0
+	RES_Status=0;//任何情况下转到AS_OFF状态都要把RES_Status置0
+	Task_Finished=0;//任何情况下转到AS_OFF状态都要把Task_Finished置0
+	EBS_Trigger_State=0;
+	EBS_Trigger_num=0;
+	EBS_Test_State=0;
+	Brake_Release_Status=0;
+	N_ERR_IND_UP();//默认把这个引脚拉高，进入AS_OFF时也拉高，触发EBS时才拉低
+}
+
+void EBS_Release_Detect()//应该在紧急制动触发1-2s后再检测，否则可能制动压力还没来得及建立，就检测油压认为制动释放了，导致出问题
+{
+	if(EBS_Test_State==1)//超过2s了
+	{
+		if(adc_value[1]<300)//气压
+		{
+		Brake_Release_Status=1;//0:制动未释放 1:制动释放(根据气压、油压)
+		}
+		else
+		{
+		Brake_Release_Status=0;
+		}
+	}
+}
+

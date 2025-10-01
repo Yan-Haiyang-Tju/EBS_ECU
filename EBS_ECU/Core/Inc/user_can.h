@@ -13,6 +13,12 @@ extern uint8_t AS_State;
 extern volatile uint8_t Driving_Mode_From_ACU;
 extern volatile uint8_t GO_Wait_State;//0:未超过5s 1：超过5s
 extern volatile uint8_t Go_valid;//0:没有接收到Go信号 1:进入AS_Ready5s后接收到Go信号
+extern volatile uint8_t RES_Status;//0:未触发RES 1:触发RES (来自CAN总线的RES接收端消息)
+extern volatile uint8_t Task_Finished;//0:默认状态 1:接收到域控传来的任务完成消息
+extern volatile uint8_t LIDAR_Cam_MPU_State;//0:雷达或相机或惯导有问题 1:都没问题
+
+extern int can_intterupt;
+
 extern UART_HandleTypeDef huart1;
 
 void CAN_Init();

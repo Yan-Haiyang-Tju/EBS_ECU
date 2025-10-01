@@ -11,6 +11,7 @@ void EBS_Trigger(void)
 {
 
 	N_ERR_IND_DOWN();//拉低，断开安全回路，自动触发EBS
+	EBS_Trigger_State=1;//目前处于EBS触发状态
 
 }
 
@@ -32,9 +33,11 @@ void EBS_State_Detect(void)//检测EBS是否可用
 {
 	qiya_compare();
 	EBS_LOGIC_Power_Detect();
-    if(QIYA_State==QIYA_OK&&EBS_LOGIC_POWER_STATE==1) //气压没问题并且EBS有电并且油路
+	//if(QIYA_State==QIYA_OK&&EBS_LOGIC_POWER_STATE==1)
+    if(QIYA_State==QIYA_OK) //气压没问题并且EBS有电并且油路
     {
     	EBS_Able_State=EBS_Enable;//EBS正常
+
     	EBS_Error_LED_DeActivate();//熄灭EBS故障灯
     }
     else

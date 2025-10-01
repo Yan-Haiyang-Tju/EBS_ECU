@@ -22,6 +22,8 @@ extern volatile uint8_t GO_Wait_Count_State;
 extern volatile uint8_t GO_Wait_State;//0:未超过5s 1：超过5s
 extern volatile uint8_t R2D_State;//R2D状态
 extern volatile uint8_t EBS_BEE_STATE;//0:EBS不报警 1:EBS报警
+extern volatile uint8_t EBS_Trigger_State;//0:EBS未触发 1:EBS触发状态
+extern volatile uint8_t EBS_Test_State;//0:EBS未触发或触发未超过2s，不能进行释放检测 1:超过2s，可以进行释放检测
 
 extern uint8_t EBS_Able_State;
 extern int tim3_num;
@@ -31,6 +33,9 @@ extern int R2D_num;
 extern int EBS_BEE_num;
 extern int GO_WAIT_num;
 extern int BEE_Sparkle_num;
+extern int ASSI_Sparkle_num;
+extern int EBS_Trigger_num;//检测EBS触发后时间的计数
+
 
 //0码和1码的定义，设置的时CCR寄存器的值
 //由于使用的思PWM输出模式1，计数值<CCR时，输出有效电平-高电平（CubeMX配置默认有效电平为高电平）

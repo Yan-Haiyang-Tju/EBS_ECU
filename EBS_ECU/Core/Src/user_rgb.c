@@ -213,8 +213,38 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 	if(htim->Instance == TIM3)//控制ASSI闪烁
 	{
 		//TIM3 10ms进一次中断  主频72Mhz 预分频7200 计数器100
+
+		 tim3_num++;
 		 WDOG_num++;
 		 BEE_Sparkle_num++;
+		 ASSI_Sparkle_num++;
+
+
+		 if(tim3_num==2)
+		 {
+			 //20ms一次
+			 tim3_num=0;
+			 adc_to_convert=1;
+			 Task_From_ACU_Solve();
+			 AS_State_Detect_Conv();
+			 AS_State_Solve();
+			// AS_State_Send();
+
+		 }
+
+
+		 if(EBS_Trigger_State==1)//EBS触发状态
+		 {
+			 EBS_Trigger_num++;//EBS触发后的定时
+			 if(EBS_Trigger_num>=200)//EBS已经触发2s了，可以进行制动压力检测判断
+			 {
+
+				 EBS_Test_State=1;//可以进行检测
+			 }
+		 }
+
+
+
 		 /*GO计时，>5s*/
 		 if(GO_Wait_Count_State==1)//GO计时是开启的
 		 {
@@ -275,47 +305,52 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			   }
 		 }
 
-		 if(WDOG_num>=10)
+		 if(ASSI_Sparkle_num>=25)//0.25s进行一次状态转变，ASSI闪烁频率为2Hz，占空比为50%
 		 {
-			 //0.1s计数清零一次
-			 WDOG_num=0;
+			 ASSI_Sparkle_num=0;
 			 if(blink_enabled==1)//蓝灯闪烁
-			 		{
-			 			led_state ^= 1;
-			 		    if(led_state)
-			 		    {
-			 		    	 ASSI_Set_Blue();
-			 		    }
-			 		    if(!led_state)
-			 		    {
-			 		    	 ASSI_Set_Black();
-			 		    }
-
-			 		}
-			 else if(blink_enabled==2)//黄灯闪烁
-			 		{
-			 		    led_state ^= 1;
-			 		    if(led_state)
-			 		   	 {
-			 		   		  ASSI_Set_Yellow();
-			 		     }
-			 		    if(!led_state)
-			 		     {
-			 		   		  ASSI_Set_Black();
-			 		     }
-			 		}
-			 else if(blink_enabled==0)
 			 {
-				 ASSI_Set_Black();
+			 	led_state ^= 1;
+			    if(led_state)
+			 	{
+			 	 ASSI_Set_Blue();
+			 	}
+			 	if(!led_state)
+			 	{
+			 	 ASSI_Set_Black();
+			 	}
+
 			 }
 
-		 adc_to_convert=1;
-		 //ASMS_State=1;
-		 //TS_State=1;
-		 ASMS_State_Detect();
-		 TS_State_Detect();
-		 HAL_GPIO_TogglePin(WDOG_GPIO_Port, WDOG_Pin);
+			 else if(blink_enabled==2)//黄灯闪烁
+			 {
+			 	 led_state ^= 1;
+			 	 if(led_state)
+			 	 {
+			 		 ASSI_Set_Yellow();
+			 	 }
+			 	if(!led_state)
+			 	{
+			 	  ASSI_Set_Black();
+			 	}
+			 }
+			 else if(blink_enabled==0)
+			 {
+			 ASSI_Set_Black();
+			 }
 		 }
+
+
+
+
+		 if(WDOG_num>=5)
+		 {
+			 //50ms翻转一次看门狗电平
+			 WDOG_num=0;
+			 AS_State_Send();
+		     HAL_GPIO_TogglePin(WDOG_GPIO_Port, WDOG_Pin);
+		 }
+
 		 //CAN_SendMessage(100,103);
 		 //tim3_num++;
 		 //if(tim3_num>=100)

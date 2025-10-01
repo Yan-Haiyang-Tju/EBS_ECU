@@ -54,11 +54,14 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, BEE_JDQ_Pin|OUTPUT5_Pin|OUTPUT6_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, TS_JDQ_Pin|DCF_JDQ_Pin|AS_DRIVING_MODE_Pin|WDOG_Pin
+  HAL_GPIO_WritePin(GPIOB, TS_JDQ_Pin|DCF_JDQ_Pin|YULIUJDQ_Pin|WDOG_Pin
                           |AS_CLOSE_SDC_Pin|N_ERR_IND_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(EBS_ERR_GPIO_Port, EBS_ERR_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(AS_DRIVING_MODE_GPIO_Port, AS_DRIVING_MODE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : BEE_JDQ_Pin OUTPUT5_Pin OUTPUT6_Pin */
   GPIO_InitStruct.Pin = BEE_JDQ_Pin|OUTPUT5_Pin|OUTPUT6_Pin;
@@ -67,9 +70,9 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TS_JDQ_Pin DCF_JDQ_Pin EBS_ERR_Pin AS_DRIVING_MODE_Pin
+  /*Configure GPIO pins : TS_JDQ_Pin DCF_JDQ_Pin EBS_ERR_Pin YULIUJDQ_Pin
                            WDOG_Pin AS_CLOSE_SDC_Pin N_ERR_IND_Pin */
-  GPIO_InitStruct.Pin = TS_JDQ_Pin|DCF_JDQ_Pin|EBS_ERR_Pin|AS_DRIVING_MODE_Pin
+  GPIO_InitStruct.Pin = TS_JDQ_Pin|DCF_JDQ_Pin|EBS_ERR_Pin|YULIUJDQ_Pin
                           |WDOG_Pin|AS_CLOSE_SDC_Pin|N_ERR_IND_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -88,11 +91,18 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(ASMS_DETECT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : INPUT3_Pin INPUT4_Pin */
-  GPIO_InitStruct.Pin = INPUT3_Pin|INPUT4_Pin;
+  /*Configure GPIO pin : AS_DRIVING_MODE_Pin */
+  GPIO_InitStruct.Pin = AS_DRIVING_MODE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(AS_DRIVING_MODE_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : INPUT4_Pin */
+  GPIO_InitStruct.Pin = INPUT4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(INPUT4_GPIO_Port, &GPIO_InitStruct);
 
 }
 

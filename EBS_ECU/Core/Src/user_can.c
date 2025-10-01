@@ -34,6 +34,11 @@ void CAN_Init()
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
     CAN_RxHeaderTypeDef rx_header;
     uint8_t rx_data[8];
+    can_intterupt++;
+    if(can_intterupt>=50)
+    {
+    	can_intterupt=0;
+    }
    // HAL_Delay(50);
    // HAL_UART_Transmit(&huart1, "CAN_ItMsg Succeed", 19, 10);
 
@@ -52,6 +57,17 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
     		   Go_valid=1;//5s后接收到了GO信号
     	   }
        }
+       if(AS_State==AS_Ready_Status||AS_State==AS_Driving_Status||AS_State==AS_Finished_Status)
+       {
+    	   if(rx_data[1]==0x01)//RES急停信号 只有在AS_Ready或者AS_Driving或者AS_Finished状态才能转变，并且只有这几种状态才根据RES信号进行状态转变
+    	   {
+    	   RES_Status=1;
+    	   }
+       }
+       if(rx_data[1]==0x02)//RES正常信号
+       {
+    	   RES_Status=0;
+       }
     }
     if (rx_header.StdId == ACU_To_EBS_ID)//CAN消息由域控传来
     {
@@ -60,10 +76,12 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
         {
         	if(rx_data[1]==0x01)
         	{
+        		LIDAR_Cam_MPU_State=0;
         		//存在传感器掉线
         	}
         	else if(rx_data[1]==0x02)
         	{
+        		LIDAR_Cam_MPU_State=1;
         		//三个传感器都没问题
         	}
         	else
@@ -75,7 +93,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
         {
            if(rx_data[1]==0x01)//任务完成，进入AS_Finished状态
            {
-
+        	   Task_Finished=1;
            }
            else if(rx_data[1]==0x02)//请求直接触发EBS
            {
@@ -92,13 +110,19 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
            {
 
         	   //手动驾驶模式选择
+        	   if(AS_State==AS_OFF_Status)//处于AS_OFF才可选择
+        	   {
         	   Driving_Mode_From_ACU=1;
+        	   }
            }
            else if(rx_data[1]==0x04)
            {
         	   //无人驾驶模式选择
+        	   if(AS_State==AS_OFF_Status)//处于AS_OFF才可选择
+        	   {
         	   Driving_Mode_From_ACU=2;
-           }
+        	   }
+        	   }
            else
            {
         	   //此处CAN通信出现错误
@@ -129,7 +153,7 @@ void CAN_Filter0_Config(void) {
     canFilter.FilterActivation = ENABLE;     // 启用过滤器
 
     // ID与掩码计算（标准帧ID=0x101）
-    canFilter.FilterIdHigh = 0x101 << 5;     // ID左移5位对齐寄存器高位
+    canFilter.FilterIdHigh = ACU_To_EBS_ID << 5;     // ID左移5位对齐寄存器高位
     canFilter.FilterIdLow = 0x0000;          // 低16位未使用
     canFilter.FilterMaskIdHigh = 0x7FF << 5; // 掩码高11位全匹配（0x7FF=11位全1）  即屏蔽码
     canFilter.FilterMaskIdLow = 0x0006;      // 强制IDE=0（标准帧）+ RTR=0（数据帧）
